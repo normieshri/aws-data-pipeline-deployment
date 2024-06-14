@@ -35,7 +35,7 @@ aws-data-pipeline-deployment/
 #### Getting Started:
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/yourusername/aws-data-pipeline-deployment.git
+   git clone https://github.com/normieshri/aws-data-pipeline-deployment.git
    ```
 2. **Build and push Docker image to ECR:**
    - Follow the instructions in the `Jenkinsfile`.
