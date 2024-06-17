@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 
 class GlobalVariables:
-    database_name = os.getenv('database_name')
-    database_username = os.getenv('database_username')
-    database_password = os.getenv('database_password')
-    database_endpoint = os.getenv('database_endpoint')
+    database_name = os.getenv('rds_lambda_database ')
+    database_username = os.getenv('admin')
+    database_password = os.getenv('admin123')
+    database_endpoint = os.getenv('csv-to-s3-project-normieshri.c2cadjg2v9lc.ap-south-1.rds.amazonaws.com')
     database_port = 3306
     s3_client = boto3.client('s3')
     database_uri = f"mysql+pymysql://{database_username}:{database_password}@{database_endpoint}:{database_port}/{database_name}"
@@ -52,9 +52,10 @@ def load_df_from_s3(bucket_name, key):
         logger.info("Object retrieved from S3 bucket successfully")
     except ClientError as e:
         logger.error(f"S3 object cannot be retrieved: {e}")
-    
+        raise
+
     file_content = get_response['Body'].read()
-    df = pd.read_csv(io.BytesIO(file_content)) # necessary transformation from S3 to pandas
+    df = pd.read_csv(io.BytesIO(file_content))  # necessary transformation from S3 to pandas
 
     return df
 
@@ -86,12 +87,32 @@ def upload_dataframe_into_rds(df):
     except Exception as e:
         logger.error(f'RDS Database connection unsuccessful: {e}')
         raise
-    
+
+    logger.info("Creating table if it doesn't exist")
+    create_table_query = f"""
+    CREATE TABLE IF NOT EXISTS {table_name} (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        STORE_LOCATION VARCHAR(255),
+        PRODUCT_ID VARCHAR(255),
+        MRP FLOAT,
+        CP FLOAT,
+        DISCOUNT FLOAT,
+        SP FLOAT
+    )
+    """
+    try:
+        with engine.connect() as connection:
+            connection.execute(create_table_query)
+            logger.info(f'Table {table_name} created or already exists')
+    except Exception as e:
+        logger.error(f'Error creating table: {e}')
+        raise
+
     logger.info("Starting to upload the dataframe into RDS database")
     try:
         df.to_sql(table_name, con=engine, if_exists='append', index=False)
         logger.info(f'Dataframe uploaded into {GlobalVariables.database_name}.{table_name} successfully')
-        
+
         uploaded_df = pd.read_sql(sql_query, engine)
         logger.info('\n' + uploaded_df.head(5).to_string(index=False))
     except Exception as e:
