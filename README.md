@@ -1,46 +1,36 @@
-# aws-data-pipeline-deployment
-This repository contains code for an AWS data pipeline project that reads data from S3 and pushes it to RDS or Glue. It uses Docker for containerization, Jenkins for CI/CD, and Terraform for provisioning AWS resources. The pipeline includes Docker image deployment to ECR and a Lambda function using this image.
+AWS Data Pipeline Project
+Overview
 
+This project aims to create a data pipeline using various AWS services to automate the process of uploading a remote CSV file to an S3 bucket, processing it with a Lambda function, and uploading the modified data to an RDS database.
+Tech Stack
 
----
+    Amazon EC2
+    Amazon S3
+    Amazon Lambda
+    Amazon RDS
+    Amazon ECR
+    Docker
+    Python
+    Shell Scripting
 
-### AWS Data Pipeline Deployment
+Objective
 
-This repository contains the code and configurations for a data pipeline project that reads data from Amazon S3, processes it, and pushes it to Amazon RDS or AWS Glue. The project leverages Docker for containerization and Jenkins for CI/CD pipeline automation. Terraform is used to provision the necessary AWS resources.
+The main objective of this project is to transfer a remote CSV file to an S3 bucket, trigger a Lambda function to modify the data, and store the modified data in a private RDS database.
+Setup Steps
 
-#### Key Features:
-- **S3 Data Ingestion:** Read data from an S3 bucket.
-- **Data Storage:** Push data to Amazon RDS. If RDS is unavailable, fallback to AWS Glue.
-- **Containerization:** Dockerfile to create an image for the application.
-- **Deployment:** Docker image deployment to AWS ECR.
-- **Serverless Processing:** AWS Lambda function using the Docker image.
-- **Infrastructure as Code:** Terraform scripts for provisioning AWS resources.
-- **Continuous Integration/Continuous Deployment:** Jenkins pipeline for automated builds and deployments.
+    IAM Role: Create a suitable IAM role for the Lambda function with access to S3, RDS, and CloudWatch.
+    Amazon VPC and Security Groups: Create a dedicated VPC for all services, with RDS, EC2, and Lambda in a private subnet.
+    EC2 Instance: Launch an EC2 instance with the necessary IAM role and security group.
+    Amazon S3: Create an S3 bucket for uploading the CSV file.
+    Amazon RDS MySQL: Create an RDS MySQL database with the required configuration.
+    Lambda Function: Create a Lambda function using a Docker image to process the CSV file and upload the data to RDS.
 
-#### Repository Structure:
-```
-aws-data-pipeline-deployment/
-│
-├── Dockerfile
-├── app.py
-├── requirements.txt
-├── Jenkinsfile
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
-└── README.md
-```
+Deployment
 
-#### Getting Started:
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/normieshri/aws-data-pipeline-deployment.git
-   ```
-2. **Build and push Docker image to ECR:**
-   - Follow the instructions in the `Jenkinsfile`.
-3. **Deploy AWS resources using Terraform:**
-   - Navigate to the `terraform` directory and follow the instructions in the `README.md`.
-4. **Run the pipeline:**
-   - Set up Jenkins and trigger the pipeline to automate the deployment process.
+    Docker Image: Build and push the Docker image to AWS ECR.
+    Lambda Function: Create the Lambda function using the Docker image.
+    Testing: Test the Lambda function to ensure it processes the CSV file correctly.
 
+Conclusion
+
+This project demonstrates the automation of a data pipeline using AWS services, enabling the seamless transfer and processing of data from a remote source to a secure RDS database.
