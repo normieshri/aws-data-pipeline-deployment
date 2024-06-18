@@ -1,6 +1,6 @@
 #!/bin/bash
 
-log_file="/project/upload_csv_to_s3.log"
+log_file="/upload_csv_to_s3.log"
 
 # Function to log messages to a log file
 log_message() {
@@ -52,7 +52,7 @@ execute_python_script() {
     local bucket_name="csv-to-s3-project-dogukan-ulu"
     local object_key="dirty_store_transactions/dirty_store_transactions.csv"
     local data_url="https://github.com/normieshri/aws-data-pipeline-deployment/raw/main/csv_to_s3.zip"
-    
+
     log_message "Executing the Python script"
     chmod +x "$csv_to_s3_script"
     python3 "$csv_to_s3_script" --bucket_name "$bucket_name" \
